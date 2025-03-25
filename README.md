@@ -1,66 +1,84 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+<h1>API Task Concorde</h1>
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Приложение позволяет добавить значение для конкретного сенсра и получить спиоск
+изменений параметра.
 
-## About Laravel
+<h2>Установка</h2>
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+1. Установите PHP
+   ```bash
+   apt-get install php8.4
+   ```
+2. Установите composer
+    ```bash
+    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    php -r "if (hash_file('sha384', 'composer-setup.php') === 'dac665fdc30fdd8ec78b38b9800061b4150413ff2e3b6f88543c636f7cd84f6db9189d43a81e5503cda447da73c7e5b6') { echo 'Installer verified'.PHP_EOL; } else { echo 'Installer corrupt'.PHP_EOL; unlink('composer-setup.php'); exit(1); }"
+    php composer-setup.php
+    php -r "unlink('composer-setup.php');"
+    sudo mv composer.phar /usr/local/bin/composer
+    ```
+3. Если используется Linux установите необходимые библиотеки PHP. https://laravel.su/docs/11.x/deployment#trebovaniia-k-serveru<br><br>
+4. Установите postgresql
+    ```bash
+    apt install postgresql postgresql-contrib -y
+    ```
+5. Клонируйте проект:<br>
+    ```bash
+    git clone https://github.com/yourusername/sensor-api.git
+    cd sensor-api
+    ```
+6. Скопируйте .env.example, установите доступы до базы и смените информацию о приложении
+    ```bash
+   cp .env.example .env 
+   ```
+7. Сгенерируйте ключ приложения
+    ```bash
+    php artisan key:generate
+    ```
+8. Запустите миграции
+    ```bash
+    php artisan migrate
+    ```
+9. Запустите приложение
+   ```bash
+   php artisan serve
+   ```
+   
+<h2>Список доступных методов</h2>
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+<pre>
+<strong>Установить измерение для датчика</strong>
+<strong>GET: </strong><a>/api/</a>
+<strong>Параметры запроса:</strong>
+    1. <strong>sensor</strong> - Ид датчика из БД (Обязательный параметр)
+<strong>Тело запроса: </strong><code>имя_параметра = значение</code>
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+<pre>
+<h4>Пример запроса:</h4>
+<strong>URL:</strong> <a>http://backend.ru/api/?sensor=1</a>
+<strong>Тело запроса:</strong> T=20
+</pre>
+</pre>
 
-## Learning Laravel
+<pre>
+<strong>Получить измерения датчика/датчиков</strong>
+<strong>GET: </strong><a>/api/get/</a>
+<strong>Параметры запроса:</strong>
+    1. <strong>sensor</strong> - Ид датчика из БД. (Обязательный параметр)
+        Этот метод позволяет передать ИД сенсора в следующих видах:
+            sensor=id                   - получить данные по конретному датчику.
+            sensor[]=id_1&sensor[]=id_2 - получить данные по нескольким датчикам
+            sensor=all                  - получить данные сразу по всем датчикам
+    2. <strong>begin</strong>  - Дата в формате timestamp или <strong>y-m-d H:i:s</strong>
+    3. <strong>end</strong>    - Дата в формате timestamp или <strong>y-m-d H:i:s</strong>
+<pre>
+<h4>Примеры запросов:</h4>
+    1. <strong>URL:</strong> <a>http://backend.ru/api/get/?sensor=1&begin=2025-03-23 09:00:00&end=2025-03-23 19:00:00</a>
+    2. <strong>URL:</strong> <a>http://backend.ru/api/get/?sensor=1&begin=1742695200&end=1742731200</a>
+    3. <strong>URL:</strong> <a>http://backend.ru/api/get/?sensor[]=1&sensor[]=2&begin=1742695200&end=1742731200</a>
+    4. <strong>URL:</strong> <a>http://backend.ru/api/get/?sensor=all&begin=1742695200&end=1742731200</a>
+</pre>
+</pre>
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
-
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
-
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
-
-## Laravel Sponsors
-
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
-
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+<h2>Тестирование</h2>
+В проекте реализованы тесты, запустите их перед началом работы, чтобы убедиться, что проект полностью рабочий, но перед тестирование рекомендую запустить `php artisan seed`.
