@@ -8,7 +8,7 @@ class Date
 {
     public static function timestampToDate(string|int $timestamp): string
     {
-        if ($timestamp && is_numeric($timestamp) || is_int($timestamp)) {
+        if (is_numeric($timestamp)) {
             $timestamp = Carbon::createFromTimestamp($timestamp);
         }
 

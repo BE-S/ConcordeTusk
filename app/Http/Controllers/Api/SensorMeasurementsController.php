@@ -3,42 +3,35 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Helpers\Date;
 use App\Http\Requests\SensorMeasurementsRequest;
 use App\Jobs\SensorJob;
 use App\Models\Api\Sensor;
 use App\Models\Api\SensorMeasurements;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
 
 class SensorMeasurementsController extends Controller
 {
     public function index(SensorMeasurementsRequest $request)
     {
         try {
-            $sensorsId   = $request->get("sensor");
-            $beginDate = $request->get("begin", "");
-            $endDate   = $request->get("end", "");
+            $sensorsId = $request->get("sensor");
+            $beginDate = $request->get("beginDate");
+            $endDate   = $request->get("endDate");
 
-            $sensorModel = new Sensor();
+            $beginDate = Date::timestampToDate($beginDate);
+            $endDate   = Date::timestampToDate($endDate);
 
-            $sensors = $sensorModel->getSensor($sensorsId);
-
-            if (!$sensors || !count($sensors)) {
-                return response()->json([
-                    "status"  => false,
-                    "message" => "Sensor not found"
-                ], 422);
-            }
-
-            $sensorJob = new SensorJob($sensors);
-            $list = $sensorJob->handle($beginDate, $endDate);
+            $list = Cache::remember("$sensorsId.$beginDate.$endDate", 60 * 60, function () use ($sensorsId, $beginDate, $endDate) {
+                return SensorMeasurements::getMeasurementsInterval($sensorsId, $beginDate, $endDate);
+            });
 
             return response()->json([
-                "status"      => true,
                 "measurement" => $list
             ]);
         } catch (\Throwable $exception) {
             return response([
-                "status" => false,
                 "error"  => $exception->getMessage()
             ], 500);
         }
