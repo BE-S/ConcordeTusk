@@ -2,6 +2,8 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\ValidDateRule;
+use App\Rules\ValidSensorRule;
 use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,38 +28,36 @@ class SensorMeasurementsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "sensor.*" => "required|numeric"
+            "sensor" => [
+                "required",
+                new ValidSensorRule()
+            ],
+            "beginDate" => [
+                new ValidDateRule()
+            ],
+            "endDate" => [
+                new ValidDateRule()
+            ]
         ];
     }
 
-    public function messages(): array
+    protected function withValidator(Validator $validator)
     {
-        return [
-            "sensor.required"  => "Value for param 'sensor' is missing",
-            "sensor.integer"   => "Param 'sensor' must be type integer",
-        ];
-    }
+        $validator->after(function () use ($validator) {
+            $beginDate = $this->beginDate;
+            $endDate   = $this->endDate;
 
-    protected function withValidator($validator)
-    {
-        $validator->sometimes("sensor", "numeric", function ($input) {
-            return is_numeric($input->sensor) && !is_string($input->sensor);
-        });
+            $beginDate = is_numeric($beginDate) ? $beginDate : strtotime($beginDate);
+            $endDate   = is_numeric($endDate)   ? $endDate   : strtotime($endDate);
 
-        $validator->sometimes("sensor", "array", function ($input) {
-            return is_array($input->sensor);
-        });
+            if (!ctype_digit($beginDate) || !ctype_digit($endDate)) {
+                $validator->errors()->add("date", "In beginDate or endData float passed expected timestamp or date timestamp");
+                return;
+            }
 
-        $validator->sometimes("begin", "nullable", function ($input) {
-            return !isset($input->begin);
-        });
-
-        $validator->sometimes("begin", "integer", function ($input) {
-            return is_int($input->begin);
-        });
-
-        $validator->sometimes("begin", "date", function ($input) {
-            return strtotime($input->begin) !== false;
+            if ($beginDate > $endDate) {
+                $validator->errors()->add("endDate", "endDate can't be greater startDate");
+            }
         });
     }
 
@@ -66,7 +66,7 @@ class SensorMeasurementsRequest extends FormRequest
         throw new HttpResponseException(
             response()->json([
                 "success" => false,
-                "errors"  => $validator->errors()->toJson()
+                "errors"  => $validator->errors()->toArray()
             ], 422)
         );
     }
