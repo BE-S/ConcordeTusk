@@ -13,10 +13,15 @@ class Sensor extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [
-        "created_at"
+        "param_name", "created_at"
     ];
 
     protected $fillable = [
-        "sensor_id", "param_name"
+        "sensor_id"
     ];
+
+    public function measurements()
+    {
+        return $this->hasMany(SensorMeasurements::class);
+    }
 }

@@ -3,55 +3,36 @@
 namespace App\Jobs;
 
 use App\Models\Api\Sensor;
+use App\Models\Api\SensorMeasurements;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Redis;
 
 class SensorJob implements ShouldQueue
 {
-    protected iterable $sensors;
+    use Queueable;
 
-
+    protected Sensor|null $sensor;
+    protected string $paramValue;
 
     /**
-     * Create a new job instance.
+     * Конструктор класса
      */
-    public function __construct(iterable $sensors)
+    public function __construct(Sensor|null $sensor, string $paramValue)
     {
-        $this->sensors   = $sensors;
+        $this->sensor     = $sensor;
+        $this->paramValue = $paramValue;
     }
 
     /**
-     * Execute the job.
+     * Выполнить установку записи в БД
      */
-    public function handle(string $beginDate, string $endDate): array
+    public function handle(): void
     {
-        $list = [];
-
-        foreach ($this->sensors as $sensor) {
-            $sensorId        = $sensor->id         ?? null;
-            $sensorParamName = $sensor->param_name ?? null;
-
-            $measurements = $sensor->getMeasurementsInterval($beginDate, $endDate);
-
-            $list[$sensorId] = [
-                "paramName" => $sensorParamName,
-                "list"     => []
-            ];
-
-            foreach ($measurements as $measurement) {
-                $createdAt = (string) ($measurement->created_at ?? "");
-
-                $value = $measurement->value;
-
-                $list[$sensorId]["list"][] = [
-                    "date"  => $createdAt,
-                    "value" => $value
-                ];
-            }
-        }
-
-        return $list;
+        $this->sensor->measurements()->create([
+            "sensor_id" => $this->sensor->id,
+            "value"     => $this->paramValue
+        ]);
     }
-
-
 }

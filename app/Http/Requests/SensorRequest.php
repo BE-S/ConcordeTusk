@@ -24,16 +24,37 @@ class SensorRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "sensor" => "required|integer"
+            "sensor" => [
+                "required",
+                "integer"
+            ],
+            "measurements" => [
+                "required",
+                "array"
+            ],
+            "measurements.*" => [
+                "required",
+                "integer"
+            ]
         ];
     }
 
-    public function messages(): array
+    protected function prepareForValidation()
     {
-        return [
-            "sensor.required" => "Value for param 'sensor' is missing",
-            "sensor.integer"  => "Param 'sensor' must be type integer"
-        ];
+        preg_match("/([A-Za-z]+)=([0-9]+)/", $this->getContent(), $matches);
+
+        if (!count($matches)) {
+            return;
+        }
+
+        $key   =        $matches[1] ?? "";
+        $value = (int) ($matches[2] ?? 0);
+
+        $this->merge([
+            "measurements" => [
+                $key => $value
+            ]
+        ]);
     }
 
     protected function failedValidation(Validator $validator)

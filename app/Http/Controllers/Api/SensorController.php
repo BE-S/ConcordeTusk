@@ -4,8 +4,9 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SensorRequest;
+use App\Jobs\SensorJob;
 use App\Models\Api\Sensor;
-use App\Models\Api\SensorMeasurements;
+use Illuminate\Support\Facades\Log;
 
 class SensorController extends Controller
 {
@@ -13,47 +14,25 @@ class SensorController extends Controller
     {
         try {
             $sensorId = $request->get("sensor");
+            $measurements = $request->get("measurements");
 
-            $sensor = Sensor::find($sensorId);
+            $key = array_key_first($measurements);
+            $value = $measurements[$key];
 
-            if (!$sensor) {
-                return response()->json([
-                    "status" => false,
-                    "message" => "Sensor not found"
-                ], 422);
+            $sensor = Sensor::where("id", $sensorId)->whereAnd("param_name", $key)->first();
+
+            if ($sensor) {
+                SensorJob::dispatch($sensor, $value);
+            } else {
+                Log::info("Can't add new data in table SensorMeasurements. Not Found sensor where id = $sensorId. Try add value: $value. " . __FILE__);
             }
-
-            $sensorParamName = $sensor->param_name ?? "";
-
-            parse_str(
-                $request->getContent(), $params
-            );
-
-            if (!isset($params[$sensorParamName])) {
-                return response()->json([
-                    "status"  => false,
-                    "message" => "Not valid param name for this sensor"
-                ], 422);
-            }
-
-            $paramValue = $params[$sensorParamName];
-
-            if (!is_numeric($paramValue)) {
-                return response()->json([
-                    "status"  => false,
-                    "message" => "Invalid parameter name for sensor"
-                ], 422);
-            }
-
-            SensorMeasurements::create([
-                "sensor_id" => $sensorId,
-                "value"     => $paramValue
-            ]);
 
             return response()->json([
                 "status" => true
             ]);
         } catch (\Throwable $exception) {
+            Log::critical($exception->getMessage() . ". " . __FILE__);
+
             return response([
                 "status" => false,
                 "error"  => $exception->getMessage()
