@@ -73,3 +73,10 @@ services:
         tty: true
         stdin_open: true
 
+
+    redis-insight:
+        image: redis/redisinsight:latest
+        restart: always
+        ports:
+            - "5540:5540"
+
