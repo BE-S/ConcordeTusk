@@ -1,9 +1,8 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Sensor;
 
-use App\Models\Api\SensorMeasurements;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Sensor\SensorMeasurements;
 use Illuminate\Database\Seeder;
 
 class SensorMeasurementsSeeder extends Seeder

@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models\Api;
+namespace App\Models\Sensor;
 
-use App\Http\Helpers\Date;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -10,7 +9,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SensorMeasurements extends Model
 {
-    /** @use HasFactory<\Database\Factories\Api\SensorMeasurementsFactory> */
+    /** @use HasFactory<\Database\Factories\Sensor\SensorMeasurementsFactory> */
     use HasFactory, SoftDeletes;
 
     protected $guarded = [

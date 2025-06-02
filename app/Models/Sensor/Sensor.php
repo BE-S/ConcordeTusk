@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Models\Api;
+namespace App\Models\Sensor;
 
-use App\Http\Helpers\Date;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -13,11 +12,11 @@ class Sensor extends Model
     use HasFactory, SoftDeletes;
 
     protected $guarded = [
-        "param_name", "created_at"
+        "created_at"
     ];
 
     protected $fillable = [
-        "sensor_id"
+        "sensor_id", "param_name"
     ];
 
     public function measurements()

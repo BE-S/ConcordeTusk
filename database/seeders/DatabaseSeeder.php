@@ -2,6 +2,9 @@
 
 namespace Database\Seeders;
 
+use Database\Seeders\Sensor\SensorMeasurementsSeeder;
+use Database\Seeders\Sensor\SensorSeeder;
+use Database\Seeders\User\UserSeeder;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,7 +17,9 @@ class DatabaseSeeder extends Seeder
         $this->call
         (
             [
-                SensorSeeder::class
+                UserSeeder::class,
+                SensorSeeder::class,
+                SensorMeasurementsSeeder::class
             ]
         );
     }

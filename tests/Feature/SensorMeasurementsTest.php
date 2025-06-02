@@ -2,11 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\Api\Sensor;
-use App\Models\Api\SensorMeasurements;
-use Database\Seeders\SensorMeasurementsSeeder;
+use Database\Seeders\Sensor\SensorMeasurementsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class SensorMeasurementsTest extends TestCase

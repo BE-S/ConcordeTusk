@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\SensorRequest;
 use App\Jobs\SensorJob;
-use App\Models\Api\Sensor;
+use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 class SensorController extends Controller

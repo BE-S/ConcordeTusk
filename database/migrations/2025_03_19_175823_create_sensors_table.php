@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('sensors', function (Blueprint $table) {
             $table->id();
+            $table->unsignedSmallInteger("user_id");
+            $table->foreign("user_id")->references("id")->on("sensors")->onDelete("cascade");
             $table->string("param_name");
             $table->timestamps();
             $table->timestamp("deleted_at")->nullable();

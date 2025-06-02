@@ -2,12 +2,9 @@
 
 namespace App\Jobs;
 
-use App\Models\Api\Sensor;
-use App\Models\Api\SensorMeasurements;
+use App\Models\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Redis;
 
 class SensorJob implements ShouldQueue
 {

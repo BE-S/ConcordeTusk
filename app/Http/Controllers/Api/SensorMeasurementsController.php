@@ -4,18 +4,18 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Helpers\Date;
-use App\Http\Requests\SensorMeasurementsRequest;
-use App\Http\Resources\SensorMeasurementsCollection;
 use App\Http\Resources\SensorMeasurementsResource;
-use App\Models\Api\Sensor;
-use App\Models\Api\SensorMeasurements;
+use App\Models\Sensor\SensorMeasurements;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
 class SensorMeasurementsController extends Controller
 {
-    public function index(SensorMeasurementsRequest $request)
+    public function index(Request $request)
     {
+        return response()->json(Auth::check());
         try {
             $sensorsId = $request->get("sensor");
             $beginDate = $request->get("beginDate");

@@ -1,11 +1,10 @@
 <?php
 
-namespace Database\Seeders;
+namespace Database\Seeders\Sensor;
 
-use App\Models\Api\Sensor;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\Sensor\Sensor;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Carbon;
+use App\Models\User\User;
 
 class SensorSeeder extends Seeder
 {
@@ -33,7 +32,13 @@ class SensorSeeder extends Seeder
             ],
         ];
 
+        $userMinAndMaxId = User::selectRaw("min(id), max(id)")->first();
+
+        $id = rand($userMinAndMaxId->min, $userMinAndMaxId->max);
+
         foreach ($sensors as $sensor) {
+            $sensor["user_id"] = $id;
+
             Sensor::create($sensor);
         }
     }

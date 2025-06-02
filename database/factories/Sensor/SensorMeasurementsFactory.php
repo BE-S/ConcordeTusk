@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories\Api;
+namespace Database\Factories\Sensor;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Api\SensorMeasurements>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Sensor\SensorMeasurements>
  */
 class SensorMeasurementsFactory extends Factory
 {
